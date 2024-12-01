@@ -1,7 +1,7 @@
 import http.client, requests, json, os, argparse
 from datetime import datetime
 
-def get_addr():
+def get_addr(adapter):
     response = requests.get('https://api.ipify.org?format=json')
     ipv4_addr = ""
     if response.status_code == 200:
@@ -11,7 +11,7 @@ def get_addr():
         print(f"Failed to retrieve IPv4 address. Status code: {response.status_code}")
 
     # Aquire the permanent, publically addressable ipv6 address of the specified adapter
-    ipv6_addr = os.system(f'ip -6 addr show dev {args.adapter} mngtmpaddr | grep -oE "([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}"')
+    ipv6_addr = os.system(f'ip -6 addr show dev {adapter} mngtmpaddr | grep -oE "([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}"')
     #ipv6_addr = "2600:1702:59d8:ac80:be24:11ff:fee4:2418" #FIXME: Test case
     
     print(f"\033[94m IPv4: {ipv4_addr}\033[0m")
@@ -37,7 +37,7 @@ def main():
     if args.verbose:
         print(f"\033[94m Adapter: {args.adapter if args.adapter else 'N/A'} \033[0m")
     
-    addrs = get_addr()
+    addrs = get_addr(adapter=args.adapter)
     if not addrs: exit()
 
     # Aquire zones
